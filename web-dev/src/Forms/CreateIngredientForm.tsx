@@ -3,7 +3,12 @@ import { useState } from "react";
 import { CardCustom } from "../Components/CardCustom";
 import { useMutationIngredientCreate } from "../Hooks/Mutation/IngredientsMutation";
 
-export function CreateIngredientForm(): JSX.Element {
+
+export interface CreateIngredientFormProps {
+  refetch: () => void
+}
+
+export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX.Element {
   const { mutateAsync: createIngredient } = useMutationIngredientCreate();
 
   const [name, setName] = useState("");
@@ -23,8 +28,8 @@ export function CreateIngredientForm(): JSX.Element {
       name,
       price,
     });
-
     resetFields();
+    refetch();
   };
 
   return (
