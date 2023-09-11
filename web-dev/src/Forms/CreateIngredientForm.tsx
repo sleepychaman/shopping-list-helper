@@ -1,7 +1,9 @@
-import { Box, Button, FormControl, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, FormControl, TextField } from "@mui/material";
 import { useState } from "react";
 import { CardCustom } from "../Components/CardCustom";
 import { useMutationIngredientCreate } from "../Hooks/Mutation/IngredientsMutation";
+import { IngredientTag } from "../Types/Ingredient";
+import { getTagValues, translateTag } from "../Utils/TagHelper";
 
 
 export interface CreateIngredientFormProps {
@@ -13,6 +15,7 @@ export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState<number>(0);
+  const [tag, setTag] = useState<IngredientTag>();
 
   const resetFields = () => {
     setName("");
@@ -20,13 +23,14 @@ export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX
   };
 
   const handlerSubmitNewIngredient = async () => {
-    if (name === undefined || name === "" || price === undefined) {
+    if (name === undefined || name === "" || price === undefined || tag === undefined) {
       alert("Please fill all the fields");
       return;
     }
     await createIngredient({
       name,
       price,
+      tag
     });
     resetFields();
     refetch();
@@ -68,7 +72,18 @@ export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX
               multiplied by the number of people in the recipe.
             </span>
           </FormControl>
-
+          <FormControl fullWidth margin="normal">
+            <Autocomplete
+              id="tag-ingredient"
+              fullWidth
+              options={getTagValues().map((e) => ({ label: translateTag(e as IngredientTag), id: e as IngredientTag }))}
+              value={tag ? {label: translateTag(tag), id: tag} : null}
+              onChange={(_e, value: {label: string, id: IngredientTag}  | null) => {
+                setTag((value!.id)!);
+              }}
+              renderInput={(params) => <TextField {...params} label="Tag" />}
+            />
+          </FormControl>
           <FormControl margin="normal">
             <Button onClick={handlerSubmitNewIngredient} variant="contained">
               Submit

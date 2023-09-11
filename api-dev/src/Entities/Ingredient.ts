@@ -1,5 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+export enum IngredientTag {
+  vegetable,
+  protein,
+  starchy
+}
+
 @Entity()
 export class Ingredient {
   @PrimaryGeneratedColumn()
@@ -10,4 +16,7 @@ export class Ingredient {
 
   @Column()
   price: number;
+
+  @Column()
+  tag: IngredientTag;
 }

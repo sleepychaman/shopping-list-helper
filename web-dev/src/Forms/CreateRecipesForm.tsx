@@ -11,10 +11,15 @@ import { Loader } from "../Components/Loader";
 import { useMutationRecipeCreate } from "../Hooks/Mutation/RecipeMutation";
 import { useQueryIngredientList } from "../Hooks/Query/IngredientQuery";
 import { ErrorPage } from "../Pages/ErrorPage";
-import { Ingredient } from "../Types/Ingredient";
+import { Ingredient, IngredientTag } from "../Types/Ingredient";
 import { OptionsMultiSelectType } from "../Types/OptionsMultiSelect";
+import { Recipe } from "../Types/Recipe";
 
-export function CreateRecipesForm(): JSX.Element {
+export interface CreateRecipesFormProps {
+  recipes: Recipe[]
+}
+
+export function CreateRecipesForm({recipes}: CreateRecipesFormProps): JSX.Element {
   const [name, setName] = useState("");
   const [timeToCook, setTimeToCook] = useState<number>(0);
   const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
@@ -36,7 +41,11 @@ export function CreateRecipesForm(): JSX.Element {
       alert("Please fill all the fields");
       return;
     }
+    if (!selectedIngredients.find(x => x.tag === IngredientTag.starchy)) {
+      alert("Please add one starchy");
+      return;
 
+    }
     await createRecipe({
       name,
       timeToCook,
@@ -46,6 +55,20 @@ export function CreateRecipesForm(): JSX.Element {
 
     resetFields();
   };
+
+  const getTagRules = (option: OptionsMultiSelectType) => {
+    if (
+      (selectedIngredients.find(x => x.tag === IngredientTag.protein) || 
+      recipes.find(x => x.ingredients.find(i => i.id === option.id))) && 
+      option.tag === IngredientTag.protein) {
+      return true;
+    } else if (
+      selectedIngredients.find(x => x.tag === IngredientTag.starchy) && 
+      option.tag === IngredientTag.starchy) {
+      return true;
+    }
+    return false;
+  }
 
   if (status === "error") {
     return <ErrorPage />;
@@ -83,12 +106,16 @@ export function CreateRecipesForm(): JSX.Element {
               multiple
               id="combo-box-demo"
               options={ingredients.map((e: Ingredient) => {
-                return { label: e.name, id: e.id };
+                return { label: e.name, id: e.id, tag: e.tag };
               })}
-              renderInput={(params: any) => (
+              getOptionDisabled={getTagRules}
+              renderInput={(params) => (
                 <TextField {...params} label="Ingredients" />
               )}
             />
+            <span className="SmallTextExplanation">
+              *Max one protein, Starchy is Mandatory.
+            </span>
           </FormControl>
           <FormControl fullWidth margin="normal">
             <TextField

@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import { Box, Button } from "@mui/material";
 import { Ingredient } from "../Types/Ingredient";
 import { useMutationIngredientDelete } from "../Hooks/Mutation/IngredientsMutation";
+import { translateTag } from "../Utils/TagHelper";
 
 export function IngredientTable({
   ingredients,
@@ -28,19 +29,21 @@ export function IngredientTable({
             <TableRow>
               <TableCell>My ingredients</TableCell>
               <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Tag</TableCell>
               <TableCell align="right">Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {ingredients.map((row) => (
               <TableRow
-                key={row.name}
+                key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
                 <TableCell align="right">{row.price} €</TableCell>
+                <TableCell align="right">{translateTag(row.tag)}</TableCell>
                 <TableCell align="right">
                   <Button onClick={() => handlerButtonDelete(row)}>
                     DELETE
