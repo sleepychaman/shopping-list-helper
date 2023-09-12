@@ -6,11 +6,8 @@ import { IngredientTag } from "../Types/Ingredient";
 import { getTagValues, translateTag } from "../Utils/TagHelper";
 
 
-export interface CreateIngredientFormProps {
-  refetch: () => void
-}
 
-export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX.Element {
+export function CreateIngredientForm(): JSX.Element {
   const { mutateAsync: createIngredient } = useMutationIngredientCreate();
 
   const [name, setName] = useState("");
@@ -33,7 +30,6 @@ export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX
       tag
     });
     resetFields();
-    refetch();
   };
 
   return (
@@ -76,6 +72,7 @@ export function CreateIngredientForm({refetch} : CreateIngredientFormProps): JSX
             <Autocomplete
               id="tag-ingredient"
               fullWidth
+              isOptionEqualToValue={(o, v) => o.id === v.id}
               options={getTagValues().map((e) => ({ label: translateTag(e as IngredientTag), id: e as IngredientTag }))}
               value={tag ? {label: translateTag(tag), id: tag} : null}
               onChange={(_e, value: {label: string, id: IngredientTag}  | null) => {

@@ -7,6 +7,11 @@ import {
 } from "typeorm";
 import { Ingredient } from "./Ingredient";
 
+export enum RecipeStatus {
+  valid,
+  error,
+}
+
 @Entity()
 export class Recipe {
   @PrimaryGeneratedColumn()
@@ -24,4 +29,7 @@ export class Recipe {
   @ManyToMany(() => Ingredient)
   @JoinTable()
   ingredients: Ingredient[];
+
+  @Column({default: RecipeStatus.valid})
+  status: RecipeStatus;
 }

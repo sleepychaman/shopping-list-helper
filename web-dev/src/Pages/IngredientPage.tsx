@@ -16,9 +16,7 @@ export function IngredientPage(): JSX.Element {
   const cancelCreationMode = () => {
     setIsCreationMode(false);
   };
-
-  const { data, status, isLoading, refetch } = useQueryIngredientList();
-
+  const { data, status, isLoading } = useQueryIngredientList();
   if (status === "error") {
     return <ErrorPage />;
   }
@@ -38,7 +36,7 @@ export function IngredientPage(): JSX.Element {
         </Button>
       </Box>
       <Box display={"flex"} gap={2}>
-        {isCreationMode && <CreateIngredientForm refetch={refetch} />}
+        {isCreationMode && <CreateIngredientForm />}
         <IngredientTable ingredients={data} />
       </Box>
     </div>

@@ -5,7 +5,7 @@ import { Requests } from "../QueriesAndMutationList";
 
 export const useQueryIngredientList = (): UseQueryResult<any, unknown> => {
   return useQuery([Requests.listIngredient], async () => {
-    const { data } = await axios.get<{ data: Partial<Ingredient> }>(
+    const { data } = await axios.get<{ data: Ingredient[] }>(
       "/ingredient/list"
     );
     return data ?? [];

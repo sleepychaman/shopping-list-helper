@@ -6,9 +6,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Box, Button } from "@mui/material";
-import { Recipe } from "../Types/Recipe";
+import { Recipe, RecipeStatus } from "../Types/Recipe";
 import { Ingredient } from "../Types/Ingredient";
 import { useMutationRecipeDelete } from "../Hooks/Mutation/RecipeMutation";
+import { ReportProblem } from "@mui/icons-material";
 
 export function RecipesTable({ recipes }: { recipes: Recipe[] }): JSX.Element {
   const { mutateAsync: deleteRecipe } = useMutationRecipeDelete();
@@ -44,7 +45,7 @@ export function RecipesTable({ recipes }: { recipes: Recipe[] }): JSX.Element {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.name} {row.status === RecipeStatus.error && <ReportProblem color='warning'/>}
                 </TableCell>
                 <TableCell align="right">{row.timeToCook}</TableCell>
                 <TableCell align="right">{row.numberOfPeople}</TableCell>

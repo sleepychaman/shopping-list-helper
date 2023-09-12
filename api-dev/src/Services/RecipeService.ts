@@ -10,17 +10,18 @@ export class RecipeService {
     return recipes;
   }
 
-  private static async checkIngredientTagRules(recipe: Recipe) {
-    const allRecipes = await this.list();
+  static async isRecipeValid(recipe: Recipe, allRecipes: Recipe[]): Promise<Boolean> {
     const proteinTag = recipe.ingredients.find(x => x.tag === IngredientTag.protein)
     if (recipe.ingredients.filter(x => x.tag === IngredientTag.protein).length > 1) {
-      throw Error("Too many protein.");
+      return false;
     } else if (proteinTag && allRecipes.find(x => x.ingredients.find(i => i.id === proteinTag.id))) {
-      throw Error("Protein already used in an other recipe.");
+      return false;
     } else if (recipe.ingredients.filter(x => x.tag === IngredientTag.starchy).length !== 1) {
-      throw Error("One starchy is mandatory.");
+      return false;
     }
+    return true;
   }
+
   static async create(recipe: Recipe): Promise<Recipe> {
     if (recipe.ingredients) {
       const ingredients = await getRepository(Ingredient).find({
@@ -28,7 +29,11 @@ export class RecipeService {
       });
       recipe.ingredients = ingredients;
     }
-    await this.checkIngredientTagRules(recipe)
+    const allRecipes = await this.list();
+    const valid = await this.isRecipeValid(recipe, allRecipes)
+    if (!valid) {
+      throw Error('Invalid ingredients tags for recipe.')
+    }
     const newRecipe = await getRepository(Recipe).save(recipe);
     return newRecipe;
   }

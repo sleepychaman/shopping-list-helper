@@ -1,7 +1,8 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import axios from "../../Utils/axios";
 import { Requests } from "../QueriesAndMutationList";
-import { IngredientTag } from "../../Types/Ingredient";
+import { Ingredient, IngredientTag } from "../../Types/Ingredient";
+import { Recipe } from "../../Types/Recipe";
 
 export const useMutationIngredientCreate = (): UseMutationResult<
   any,
@@ -21,7 +22,33 @@ export const useMutationIngredientCreate = (): UseMutationResult<
     },
     {
       onSuccess: () => {
-        clientQuery.invalidateQueries(Requests.listRecipe);
+        clientQuery.invalidateQueries(Requests.listIngredient);
+      },
+    }
+  );
+};
+
+export const useMutationIngredientUpdate = (): UseMutationResult<
+  {ingredient: Ingredient, invalidRecipes: Recipe[]},
+  unknown,
+  Ingredient
+> => {
+  const clientQuery = useQueryClient();
+
+  return useMutation(
+    [Requests.updateIngredient],
+    async ({id, name, price, tag }: Ingredient) => {
+      const resp = await axios.put<{ingredient: Ingredient, invalidRecipes: Recipe[]}>(`/ingredient/update`, {
+        id,
+        name,
+        price,
+        tag,
+      });
+      return resp.data
+    },
+    {
+      onSuccess: () => {
+        clientQuery.invalidateQueries(Requests.listIngredient);
       },
     }
   );

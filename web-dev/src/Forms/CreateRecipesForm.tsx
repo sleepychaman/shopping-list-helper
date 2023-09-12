@@ -105,8 +105,9 @@ export function CreateRecipesForm({recipes}: CreateRecipesFormProps): JSX.Elemen
               value={selectedIngredients}
               multiple
               id="combo-box-demo"
+              isOptionEqualToValue={(o, v) => o.id === v.id}
               options={ingredients.map((e: Ingredient) => {
-                return { label: e.name, id: e.id, tag: e.tag };
+                return {id: e.id, label: e.name, tag: e.tag };
               })}
               getOptionDisabled={getTagRules}
               renderInput={(params) => (
